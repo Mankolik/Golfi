@@ -63,7 +63,7 @@ let browser;
     const swing=await page.locator('#swing').boundingBox();
     await page.mouse.move(swing.x+swing.width/2,swing.y+swing.height/2);await page.mouse.down();await page.waitForTimeout(470);await page.mouse.up();
     try{await page.waitForFunction(()=>document.querySelector('#next')!==null,{},{timeout:15000});}
-    catch(error){console.error('Failed short putt on hole',hole+1,await page.evaluate(()=>localStorage.getItem('golfi-round-v1'))));await page.screenshot({path:path.join(root,'test-results/failed-putt.png')});throw error;}
+    catch(error){console.error('Failed short putt on hole',hole+1,await page.evaluate(()=>localStorage.getItem('golfi-round-v1')));await page.screenshot({path:path.join(root,'test-results/failed-putt.png')});throw error;}
     assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem('golfi-round-v1')))).scores.length,hole+1);
     if(hole===8){assert.ok((await page.locator('#modal-content').textContent()).includes('That’s a round.'));await page.screenshot({path:path.join(root,'test-results/round-complete.png')});}
     await page.locator('#next').click();
