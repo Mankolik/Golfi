@@ -48,16 +48,22 @@ let browser;
   }
   await page.setViewportSize({width:390,height:844});
   // Stage a short putt, then complete all nine holes through real controls/physics.
+  const engine=await import(require('node:url').pathToFileURL(path.join(root,'engine.js')).href);
   for(let hole=0;hole<9;hole++){
-    await page.evaluate(async hole=>{
-      const engine=await import('./engine.js');const c=engine.generateCourse('GOLFI-TEST',hole);
-      const scores=Array.from({length:hole},(_,i)=>({strokes:4,par:engine.generateCourse('GOLFI-TEST',i).par}));
-      localStorage.setItem('golfi-round-v1',JSON.stringify({seed:'GOLFI-TEST',hole,scores,strokes:3,ball:engine.makeBall({x:c.pin.x,y:c.pin.y+12})}));
-    },hole);
-    await page.reload();await page.locator('[data-club="putter"]').click();
+    const c=engine.generateCourse('GOLFI-TEST',hole);
+    const scores=Array.from({length:hole},(_,i)=>({strokes:4,par:engine.generateCourse('GOLFI-TEST',i).par}));
+    const snapshot=JSON.stringify({seed:'GOLFI-TEST',hole,scores,strokes:3,ball:engine.makeBall({x:c.pin.x,y:c.pin.y+12})});
+    // Install after the previous page's visibilitychange autosave, before game startup.
+    await page.addInitScript(({hole,snapshot})=>{
+      if(new URL(location.href).searchParams.get('test-hole')===String(hole))localStorage.setItem('golfi-round-v1',snapshot);
+    },{hole,snapshot});
+    await page.goto(url+'&test-hole='+hole);await page.locator('[data-club="putter"]').click();
+    assert.equal(await page.locator('#strokes').textContent(),'3');
+    assert.equal(await page.locator('#distance').textContent(),'6');
     const swing=await page.locator('#swing').boundingBox();
     await page.mouse.move(swing.x+swing.width/2,swing.y+swing.height/2);await page.mouse.down();await page.waitForTimeout(470);await page.mouse.up();
-    await page.waitForFunction(()=>document.querySelector('#next')!==null,{},{timeout:15000});
+    try{await page.waitForFunction(()=>document.querySelector('#next')!==null,{},{timeout:15000});}
+    catch(error){console.error('Failed short putt on hole',hole+1,await page.evaluate(()=>localStorage.getItem('golfi-round-v1'))));await page.screenshot({path:path.join(root,'test-results/failed-putt.png')});throw error;}
     assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem('golfi-round-v1')))).scores.length,hole+1);
     if(hole===8){assert.ok((await page.locator('#modal-content').textContent()).includes('That’s a round.'));await page.screenshot({path:path.join(root,'test-results/round-complete.png')});}
     await page.locator('#next').click();
