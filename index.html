@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173c32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="A little escape to the fairway. Nine procedural golf holes, made for your thumbs.">
+  <title>Golfi — A little out of office</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main id="app">
+  <header class="masthead"><a class="brand" href="./" aria-label="Golfi home">golfi<span>✳</span></a><span class="tagline">A LITTLE OUT OF OFFICE</span><div class="tools"><button id="sound" class="icon-button" aria-label="Enable sound" title="Toggle sound">♪<span id="sound-off">/</span></button><button id="help" class="icon-button" aria-label="How to play">?</button></div></header>
+  <section class="score-strip" aria-label="Current score"><div><span class="eyebrow">HOLE</span><strong><span id="hole-number">01</span><small> / 09</small></strong></div><div><span class="eyebrow">PAR</span><strong id="par">4</strong></div><div><span class="eyebrow">STROKES</span><strong id="strokes">0</strong></div><button id="scorecard" aria-label="Open scorecard"><span class="eyebrow">ROUND ↗</span><strong id="total">E</strong></button></section>
+  <section id="course-wrap" aria-label="Golf course"><canvas id="course" tabindex="0" aria-label="Golf course. Drag backwards to shoot, or tap to aim and hold the swing button. Arrow keys aim, space charges a shot."></canvas><div class="course-top"><span id="course-name">THE QUIET PINES</span><span class="wind"><span id="wind-arrow">↗</span> <span id="wind">2.4</span> m/s</span></div><div class="course-bottom"><span id="lie">● TEE BOX</span><span><strong id="distance">180</strong> m to pin</span></div><div id="toast" role="status" aria-live="polite"></div><button id="cancel" hidden>Cancel shot</button></section>
+  <section class="controls" aria-label="Shot controls"><div class="club-heading"><span class="eyebrow">CHOOSE YOUR CLUB</span><span id="club-detail">Low flight · long roll</span></div><div id="clubs" class="clubs"><button data-club="driver"><span class="club-symbol">╱</span><strong>Driver</strong><small>LONG</small></button><button data-club="iron"><span class="club-symbol">╱</span><strong>Iron</strong><small>BALANCED</small></button><button data-club="wedge"><span class="club-symbol">╱</span><strong>Wedge</strong><small>HIGH</small></button><button data-club="putter"><span class="club-symbol">╱</span><strong>Putter</strong><small>GROUND</small></button></div><div class="swing-row"><div class="power-box"><div><span class="eyebrow">POWER</span><strong id="power-value">0%</strong></div><div class="power-track"><i id="power-fill"></i><b></b><b></b><b></b></div></div><button id="swing">Hold to swing <span>↗</span></button></div><p id="hint">Drag back on the course & release to shoot</p></section>
+  <footer><span id="seed-label">FIELD NOTES / 0000</span><button id="new-round">New course ↻</button></footer>
+</main>
+<dialog id="modal"><button id="close-modal" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>
+<script type="module" src="./game.js"></script>
+</body></html>
